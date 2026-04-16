@@ -6,6 +6,8 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
 
+🚀 **Live Project Demo:** [https://library-management-system-6ewe.vercel.app/](https://library-management-system-6ewe.vercel.app/)
+
 A full-stack, comprehensive Library Management System built with React, Node.js, Express, and PostgreSQL. Features a premium glassmorphic user interface, role-based access control, auto-calculating fine tracking, and detailed analytical reporting.
 
 ---
