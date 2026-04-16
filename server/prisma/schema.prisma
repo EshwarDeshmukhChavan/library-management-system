@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String
+  isActive  Boolean  @default(true)  @map("is_active")
+  isAdmin   Boolean  @default(false) @map("is_admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  @@map("users")
+}
+
+model Category {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  codePrefix String       @unique @map("code_prefix")
+  books      BookMovie[]
+
+  @@map("categories")
+}
+
+model BookMovie {
+  id              Int           @id @default(autoincrement())
+  serialNo        String        @unique @map("serial_no")
+  name            String
+  authorName      String        @map("author_name")
+  type            ItemType      @default(BOOK)
+  categoryId      Int           @map("category_id")
+  category        Category      @relation(fields: [categoryId], references: [id])
+  status          ItemStatus    @default(AVAILABLE)
+  cost            Float         @default(0)
+  procurementDate DateTime      @map("procurement_date")
+  quantity        Int           @default(1)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt      @map("updated_at")
+  transactions    Transaction[]
+  issueRequests   IssueRequest[]
+
+  @@map("books_movies")
+}
+
+model Member {
+  id              Int           @id @default(autoincrement())
+  membershipId    String        @unique @map("membership_id")
+  firstName       String        @map("first_name")
+  lastName        String        @map("last_name")
+  contactNumber   String        @map("contact_number")
+  contactAddress  String        @map("contact_address")
+  aadharCardNo    String        @map("aadhar_card_no")
+  startDate       DateTime      @map("start_date")
+  endDate         DateTime      @map("end_date")
+  status          MemberStatus  @default(ACTIVE)
+  pendingFine     Float         @default(0) @map("pending_fine")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt      @map("updated_at")
+  transactions    Transaction[]
+  issueRequests   IssueRequest[]
+
+  @@map("members")
+}
+
+model Transaction {
+  id               Int               @id @default(autoincrement())
+  bookMovieId      Int               @map("book_movie_id")
+  bookMovie        BookMovie         @relation(fields: [bookMovieId], references: [id])
+  memberId         Int               @map("member_id")
+  member           Member            @relation(fields: [memberId], references: [id])
+  issueDate        DateTime          @map("issue_date")
+  returnDate       DateTime          @map("return_date")
+  actualReturnDate DateTime?         @map("actual_return_date")
+  fineCalculated   Float             @default(0) @map("fine_calculated")
+  finePaid         Boolean           @default(false) @map("fine_paid")
+  remarks          String?
+  status           TransactionStatus @default(ACTIVE)
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt      @map("updated_at")
+
+  @@map("transactions")
+}
+
+model IssueRequest {
+  id             Int       @id @default(autoincrement())
+  memberId       Int       @map("member_id")
+  member         Member    @relation(fields: [memberId], references: [id])
+  bookMovieId    Int       @map("book_movie_id")
+  bookMovie      BookMovie @relation(fields: [bookMovieId], references: [id])
+  requestedDate  DateTime  @map("requested_date")
+  fulfilledDate  DateTime? @map("fulfilled_date")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("issue_requests")
+}
+
+enum ItemType {
+  BOOK
+  MOVIE
+}
+
+enum ItemStatus {
+  AVAILABLE
+  ISSUED
+}
+
+enum MemberStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum TransactionStatus {
+  ACTIVE
+  RETURNED
+}
