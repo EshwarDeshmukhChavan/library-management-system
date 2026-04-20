@@ -113,3 +113,9 @@ textarea {
   resize: vertical;
   min-height: 60px;
 }
+
+/* Dropdown Option */
+option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
